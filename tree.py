@@ -8,7 +8,7 @@
 #################
 
 from src.flags import Flag
-import os
+import os, sys
 
 def explore_dir(path="/", dot_file=False, tree=['├───'], last=False, limit_depth=100, current_depth=0):
     if current_depth >= limit_depth:
@@ -20,6 +20,7 @@ def explore_dir(path="/", dot_file=False, tree=['├───'], last=False, lim
         else: length = len([x for x in os.listdir(path) if not x.startswith('.')])        
     except PermissionError:
         print(f"\033[90m[\033[91mx\033[90m] \033[0m Permission Error.")
+        sys.exit(1)
 
     j=0
     left = "├───"
@@ -59,6 +60,7 @@ def explore_dir(path="/", dot_file=False, tree=['├───'], last=False, lim
                 tree.pop(-1)
         except PermissionError:
             print(f"\033[90m[\033[91mx\033[90m] \033[0m Permission Error.")
+            sys.exit(1)
             
         if last == True: tree[len(tree)-2] = temp
 
@@ -71,6 +73,8 @@ flag.new(short="-d", full="--depth", type="int", default=100, help="Limit depth 
 flag.parse()
 
 path = flag.path
+if path.endswith("/") and path != "/":
+    path = path[:-1]
 dot_file = flag.dotfiles
 depth = flag.depth
 
